@@ -4,8 +4,8 @@
 
 
 body {
-    max-width: 800px;
-    margin: 20px auto;
+    /* max-width: 800px; */
+    padding: 20px auto;
     color: white;
     overflow: hidden;
 }

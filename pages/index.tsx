@@ -2,10 +2,12 @@ import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import TodoCard from "../components/TodoCard";
 import axios from "../utils/asiox";
-import query from '../utils/graphql/query'
+import query, { GET_TODOS } from '../utils/graphql/query'
 import mutation from '../utils/graphql/mutation'
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { todosAtom } from '../atom/todoAtom'
+import { authAtom } from "../atom/authAtom";
+import { useQuery } from "@apollo/client";
 interface Props {
   todos: Todo[]
 }
@@ -13,6 +15,12 @@ interface Props {
 const Home = ({ todos }: Props) => {
   const [myTodos, setMytodos] = useRecoilState(todosAtom)
   const [newTodo, setNewTodo] = useState<string>('')
+
+  const user = useRecoilValue(authAtom)
+
+
+  const { data, loading, error } = useQuery(GET_TODOS);
+
 
   useEffect(() => {
     if (todos[0]) {
@@ -45,7 +53,7 @@ const Home = ({ todos }: Props) => {
       {/* backgroun effect */}
       <div className="bganimation">
         <div className="night">
-          {new Array(20).fill('_').map((_) => <div className="shooting_star" />)}
+          {new Array(20).fill('_').map((_, index) => <div key={index + 'shooting_star'} className="shooting_star" />)}
         </div>
       </div>
       {/*  */}
@@ -57,7 +65,7 @@ const Home = ({ todos }: Props) => {
         </form>
         <h4 className="border-b-[0.4px] pb-4 w-1/2 border-gray-300 mb-4 text-center text-lg">Your Todo List</h4>
         <div className="h-[600px] overflow-scroll pb-12">
-          {myTodos?.map((item => item && <TodoCard todo={item} />))}
+          {myTodos?.map((item => item && <TodoCard key={item.id} todo={item} />))}
         </div>
       </div>
     </>
