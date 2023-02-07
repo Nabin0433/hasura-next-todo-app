@@ -8,11 +8,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { todosAtom } from '../atom/todoAtom'
 import { authAtom } from "../atom/authAtom";
 import { useQuery } from "@apollo/client";
-interface Props {
-  todos: Todo[]
-}
 
-const Home = ({ todos }: Props) => {
+const Home = () => {
   const [myTodos, setMytodos] = useRecoilState(todosAtom)
   const [newTodo, setNewTodo] = useState<string>('')
 
@@ -21,12 +18,11 @@ const Home = ({ todos }: Props) => {
 
   const { data, loading, error } = useQuery(GET_TODOS);
 
-
   useEffect(() => {
-    if (todos[0]) {
-      setMytodos(todos)
+    if (data?.user_todos[0]) {
+      setMytodos(data?.user_todos)
     }
-  }, [todos])
+  }, [data])
 
   const submitTodo = (e: FormEvent<HTMLFormElement>) => {
     if (newTodo) {
@@ -73,12 +69,3 @@ const Home = ({ todos }: Props) => {
 }
 
 export default Home;
-
-export async function getServerSideProps(context: any) {
-  const res = await (await axios.post('', query.getTodosQuery)).data;
-  return {
-    props: {
-      todos: res?.data?.user_todos ?? []
-    },
-  }
-}
